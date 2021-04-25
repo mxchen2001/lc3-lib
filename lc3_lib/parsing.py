@@ -1,5 +1,5 @@
 from os import close
-from util_func import get_start_addr, get_opcode, get_register, get_num
+from util_func import get_start_addr, valid_symbol
 
 def file_check(fn):
     try:
@@ -31,9 +31,16 @@ def parse(filename: str):
         return buffer
 
 
-def get_symbols(buffer: list) -> dict:
-    for line in buffer:
-        if get line[0]
+def get_symbols(buffer: list, starting_addr: int) -> dict:
+    symbol_table = dict()
+    for i in range(0, len(buffer)):
+        line = buffer[i].split()
+        try:
+            if valid_symbol(line[0]):
+                symbol_table[line[0]] = i + starting_addr
+        except IndexError as e:
+            print(e)
+    return symbol_table
 
     
 
@@ -47,7 +54,8 @@ temp = parse(sys.argv[1])
 for string in temp:
     print(string)
 
-print(get_start_addr(temp))
+start = get_start_addr(temp)
+print(get_symbols(temp, start))
 
     
 

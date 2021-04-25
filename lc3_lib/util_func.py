@@ -76,7 +76,6 @@ def get_opcode(opcode: str, lc3b = False) -> str:
                     'BRNP'   :  '0000',
                     'BRNZP'  :  '0000',
 
-
                     'JMP'    :  '1100',
                     'JSR'    :  '0100',
                     'JSRR'   :  '0100',
@@ -112,23 +111,72 @@ def get_register(register: str):
 def get_num(num: str):
     try:
         if (num[0] == '#'):
-            return True, int(num[1:], 10)
+            return int(num[1:], 10)
         elif (num[0] == '0' and num[1] == 'x'):
-            return True, int(num[2:], 16)
+            return int(num[2:], 16)
     except IndexError as e:
         print(e)
     except ValueError as e:
         print(e)
+    return None
 
 
 def get_start_addr(buffer: list):
-    start_arr = buffer[0].split(" ")
+    start_arr = buffer[0].split()
     if (start_arr[0].upper() != '.ORIG'):
         print('First Token must be ".orig"')
-        return False, _
+        return None
     try:
-        return True, get_num(start_arr[1])
+        return get_num(start_arr[1])
     except IndexError as e:
         print(e)
 
-    return False, _
+    return None
+
+def valid_symbol(token: str):
+    keywords = [
+                    'ADD',
+                    'AND',
+                    'BR' ,
+                    'BRN',
+                    'BRZ',
+                    'BRP',
+                    'BRNZ',
+                    'BRZP',
+                    'BRNP',
+                    'BRNZP',
+                    'JMP',
+                    'JSR',
+                    'JSRR',
+                    'LD',
+                    'LDI',
+                    'LDR',
+                    'LEA',
+                    'NOT',
+                    'RET',
+                    'RTI',
+                    'ST',
+                    'STI',
+                    'STR',
+                    'TRAP', 
+                    'R0', 
+                    'R1', 
+                    'R2', 
+                    'R3', 
+                    'R4', 
+                    'R5', 
+                    'R6', 
+                    'R7', 
+                    '.ORIG',
+                    '.FILL',
+                    '.BLKW',
+                    '.STRINGZ',
+                    '.END',
+                    'HALT'
+                  ]
+
+    if token.upper() in keywords:
+        return False
+    if not token[0].isalpha():
+        return False
+    return True
