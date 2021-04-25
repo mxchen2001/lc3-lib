@@ -106,7 +106,7 @@ def get_register(register: str):
                     'R6': '110',
                     'R7': '111',
                }
-    return registers[registers.upper()] if registers.upper() in registers.keys() else None
+    return registers[register.upper()] if register.upper() in registers.keys() else None
 
 def get_num(num: str):
     try:
@@ -188,6 +188,28 @@ def valid_symbol(token: str):
     if not token[0].isalpha():
         return False
     return True
+
+def perform_psuedo_op(instruction_list: list) -> list:
+    opcode = instruction_list[0].upper()
+    return_list = []
+    if opcode == '.ORIG':
+        return_list.append(hex(get_num(instruction_list[1])))
+        return return_list
+    elif opcode == '.FILL':
+        return_list.append(hex(get_num(instruction_list[1])))
+        return return_list
+    elif opcode == '.BLKW':
+        return_list.append(hex(get_num(instruction_list[1])))
+        return return_list
+    elif opcode == '.STRINGZ':
+        # TODO
+        pass
+    elif opcode == '.END':
+        # TODO
+        pass
+    elif opcode == 'HALT':
+        return_list.append('0xF025')
+        return return_list
 
 
 def check_offset_limit(opcode: str, ofs_val: int) -> bool:

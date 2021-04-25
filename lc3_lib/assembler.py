@@ -1,4 +1,4 @@
-from parsing import parse, get_symbols, replace_symbols
+from parsing import parse, get_symbols, replace_symbols, translate
 from util_func import get_start_addr
 from copy import deepcopy
 
@@ -19,20 +19,19 @@ def assemble(filename: str, o_filename = "main.asm"):
     buffer_w_symbols = deepcopy(buffer)
     buffer_w_symbols.pop(0)
 
-    print(replace_symbols(buffer_w_symbols, symbol_table, starting_address))
+    buffer_w_symbols = replace_symbols(buffer_w_symbols, symbol_table, starting_address)
+
+    print(buffer_w_symbols)
+
+    output_buffer = []
+    for instruction in buffer_w_symbols:
+        output_buffer.append(translate(instruction))
 
 
-
+    print(output_buffer)
 
 
 
 assemble("input")
 import sys
 print(sys.argv)
-
-# temp = parse(sys.argv[1])
-
-
-
-# start = get_start_addr(temp)
-# print(get_symbols(temp, start))
