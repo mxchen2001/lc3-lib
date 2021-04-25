@@ -111,9 +111,17 @@ def get_register(register: str):
 def get_num(num: str):
     try:
         if (num[0] == '#'):
+            # decimal
             return int(num[1:], 10)
         elif (num[0] == '0' and num[1] == 'x'):
+            # hexidecimal
             return int(num[2:], 16)
+            # hexidecimal
+        elif (num[0] == 'x'):
+            return int(num[2:], 16)
+        elif (num[0] == 'b'):
+            # binary
+            return int(num[1:], 2)
     except IndexError as e:
         print(e)
     except ValueError as e:
@@ -180,3 +188,53 @@ def valid_symbol(token: str):
     if not token[0].isalpha():
         return False
     return True
+
+
+def check_offset_limit(opcode: str, ofs_val: int) -> bool:
+    offset_limits = {
+
+                    'BR'     :  9,
+                    'BRN'    :  9,
+                    'BRZ'    :  9,
+                    'BRP'    :  9,
+                    'BRNZ'   :  9,
+                    'BRZP'   :  9,
+                    'BRNP'   :  9,
+                    'BRNZP'  :  9,
+
+                    'JSR'    :  11,
+
+                    'LD'     :  9,
+                    'LDI'    :  9,
+                    'LDR'    :  6,
+
+                    'LEA'    :  9,
+
+                    'ST'     :  9,
+                    'STI'    :  9,
+                    'STR'    :  6,
+                  }
+    if opcode.upper() not in offset_limits.keys():
+        return False
+
+    ofs_limit = offset_limits[opcode.upper()]
+    lower_bound = (-1 * (2**ofs_limit // 2)) + 1
+    upper_bound = (2**ofs_limit // 2)
+
+    return (ofs_val >= lower_bound and ofs_val <= upper_bound )
+
+def check_immediate_limit(opcode: str, imm_val: int) -> bool:
+    immediate_limits = {
+                    'ADD'    :  5,
+                    'AND'    :  5,
+                    'TRAP'   :  8, 
+                  }
+
+    if opcode.upper() not in immediate_limits.keys():
+        return False
+
+    imm_limit = immediate_limits[opcode.upper()]
+    lower_bound = (-1 * (2**imm_limit // 2)) + 1
+    upper_bound = (2**imm_limit // 2)
+
+    return (imm_val >= lower_bound and imm_val <= upper_bound )

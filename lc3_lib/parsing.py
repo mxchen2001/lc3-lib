@@ -1,5 +1,5 @@
 from os import close
-from util_func import get_start_addr, valid_symbol
+from util_func import valid_symbol, check_offset_limit, check_immediate_limit
 
 def file_check(fn):
     try:
@@ -27,7 +27,7 @@ def parse(filename: str):
                     break
                 valid_code += char
             if len(valid_code) != 0:
-                buffer.append(valid_code)
+                buffer.append(valid_code.replace(',', ''))
         return buffer
 
 
@@ -37,25 +37,35 @@ def get_symbols(buffer: list, starting_addr: int) -> dict:
         line = buffer[i].split()
         try:
             if valid_symbol(line[0]):
-                symbol_table[line[0]] = i + starting_addr
+                symbol_table[line[0]] = i + starting_addr - 1
         except IndexError as e:
             print(e)
     return symbol_table
 
-    
+def replace_symbols(buffer: list, symbol_table: dict, starting_addr: int) -> list:
+    return_buffer = []
+    for i in range(0, len(buffer)):
+        tokens = buffer[i].split()
+        if (tokens[0] in symbol_table.keys()):
+            tokens.pop(0)
+        if ((symbol_reference := tokens[len(tokens) - 1]) in symbol_table.keys()):
+            pc_ofs = symbol_table[symbol_reference] - (i + starting_addr) - 1
+            tokens[len(tokens) - 1] = "#" + str(pc_ofs)
+
+        temp = ""
+        for token in tokens:
+            temp += token + ' '
+        temp.strip()
+        return_buffer.append(temp)
+        # print(tokens)
+    return return_buffer
+
+            # # TODO check opcode is valid
+            # if (check_offset_limit(tokens[0], pc_ofs) == False and check_immediate_limit(tokens[0], pc_ofs)):
+            #     print("PC offset is out of bounds")
+            #     return None
 
 
-import sys
-print(sys.argv)
-
-temp = parse(sys.argv[1])
-
-
-for string in temp:
-    print(string)
-
-start = get_start_addr(temp)
-print(get_symbols(temp, start))
 
     
 
