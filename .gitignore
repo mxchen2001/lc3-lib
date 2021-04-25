@@ -3,3 +3,6 @@ lc3-venv/
 *.egg-info
 build/
 dist/
+script.sh
+.vscode
+.DS_Store
