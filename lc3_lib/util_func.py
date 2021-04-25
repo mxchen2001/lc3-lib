@@ -27,7 +27,8 @@ def haversine(lon1: float, lat1: float, lon2: float, lat2: float) -> float:
 """
 
 """
-def get_opcode(opcode, lc3b = False) -> str:
+def get_opcode(opcode: str, lc3b = False) -> str:
+    opcode = opcode.upper()
     lc3b_opcodes = {
                     'ADD'    :  '0001', 
                     'AND'    :  '0101', 
@@ -58,7 +59,7 @@ def get_opcode(opcode, lc3b = False) -> str:
                     'STB'    :  '', 
                     'STW'    :  '', 
                     'TRAP'   :  '', 
-                    'XOR'    : '', 
+                    'XOR'    :  '', 
                     }
 
 
@@ -89,10 +90,45 @@ def get_opcode(opcode, lc3b = False) -> str:
                     'ST'     :  '0011',
                     'STI'    :  '1011',
                     'STR'    :  '0111',
-                    'TRAP'   : '1111', 
+                    'TRAP'   :  '1111', 
                   }
     if lc3b:
         return lc3b_opcodes[opcode] if opcode in lc3b_opcodes.keys() else None
     return lc3_opcodes[opcode] if opcode in lc3_opcodes.keys() else None
 
+def get_register(register: str):
+    registers = {
+                    'R0': '000',
+                    'R1': '001',
+                    'R2': '010',
+                    'R3': '011',
+                    'R4': '100',
+                    'R5': '101',
+                    'R6': '110',
+                    'R7': '111',
+               }
+    return registers[registers.upper()] if registers.upper() in registers.keys() else None
 
+def get_num(num: str):
+    try:
+        if (num[0] == '#'):
+            return True, int(num[1:], 10)
+        elif (num[0] == '0' and num[1] == 'x'):
+            return True, int(num[2:], 16)
+    except IndexError as e:
+        print(e)
+    except ValueError as e:
+        print(e)
+
+
+def get_start_addr(buffer: list):
+    start_arr = buffer[0].split(" ")
+    if (start_arr[0].upper() != '.ORIG'):
+        print('First Token must be ".orig"')
+        return False, _
+    try:
+        return True, get_num(start_arr[1])
+    except IndexError as e:
+        print(e)
+
+    return False, _
